@@ -1,18 +1,8 @@
 const webpack = require('webpack');
-// we use node path to know what directory we're in
 const path = require('path');
-
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
-const extractSass = new ExtractTextPlugin({
-    // extract text will use this file path appended to the publicPath
-    filename: 'assets/css/styles.css',
-});
-
-const extractHtml = new htmlWebpackPlugin({
-  template: './src/index.html'
-})
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   // We need both the js and sass entry points
@@ -33,7 +23,7 @@ module.exports = {
         }
       },
 			{ test: /\.scss$/,
-        use: extractSass.extract({
+        use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [{
             loader: 'css-loader'
@@ -46,7 +36,14 @@ module.exports = {
       }]
 	},
 	plugins: [
-    extractSass,
-    extractHtml
+    new ExtractTextPlugin({
+        filename: 'assets/css/styles.css',
+    }),
+    new htmlWebpackPlugin({
+      template: './src/index.html'
+    }),
+    new CleanWebpackPlugin(
+      ['dist']
+    ),
   ]
 }
